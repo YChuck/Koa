@@ -6,19 +6,26 @@ const request = require('./request')
 const response = require('./response')
 const compose = require('./compose')
 
+/**
+ * Koa 内部基于 Node 原生 Http 模块
+ * 使用属性代理方式 对原生 Http 模块的 Requsest/Response 复杂操作进行封装 简单使用
+ * 使用 ES2018 async await 语法设置中间件
+ * 中间件核心思想: 洋葱圈模型 (当请求访问时 从外到内依次调用不同中间件 当执行到中间件链尾后倒序执行完所有中间件的剩余操作)
+ */
+
 class Application {
 
     constructor() {
-        this.middleware = []
-        this.context = Object.create(context)
-        this.request = Object.create(request)
-        this.response = Object.create(response)
+        this.middleware = [] // 数组：存储中间件
+        this.context = Object.create(context) // Koa 上下文实例
+        this.request = Object.create(request) // Koa 封装request
+        this.response = Object.create(response) // Koa 封装response
     }
 
     use(middleware) {
         if ('function' !== typeof middleware) throw new Error('The Koa middlewear must be an object')
         this.middleware.push(middleware)
-        return this
+        return this // 链式调用
     }
 
     listen(...args) {
