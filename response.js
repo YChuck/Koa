@@ -150,6 +150,10 @@ module.exports = {
         }
     },
 
+    get(field) {
+        return this.header[field.toLowerCase()] || '';
+    },
+
     remove(field) {
         if (this.headerSent) return;
         this.res.removeHeader(field);
